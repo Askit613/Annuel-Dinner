@@ -299,41 +299,35 @@
       margin-top: 3px; 
     }
 
-    /* ===== 滑動徽章 (Stamps) - 特大超顯眼版 ===== */
+    /* 滑動徽章 (Stamps) - 推唔推薦 (海報圖片中央置中並放大) */
     .stamp { 
       position: absolute; 
-      top: 35px; 
-      font-size: 2.1rem; /* 字體大幅放大 */
+      top: 145px; /* 剛好在 290px 海報垂直正中間 */
+      left: 50%;
+      font-size: 2.3rem; 
       font-weight: 900; 
-      letter-spacing: 2px;
-      padding: 8px 18px; 
+      padding: 10px 24px; 
       border-radius: 16px; 
       opacity: 0; 
       pointer-events: none;
       transition: opacity 0.15s ease;
-      z-index: 35;
+      z-index: 30;
+      white-space: nowrap;
+      background: rgba(15, 23, 42, 0.6); /* 半透明深底防反光，任何背景均清楚可見 */
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
     }
-
     .stamp-like { 
-      right: 15px; 
       color: #4ade80; 
-      background: rgba(15, 23, 42, 0.8); /* 深色毛玻璃底色，避免撞淺色海報 */
-      border: 4.5px solid #4ade80; 
-      transform: rotate(15deg); 
-      box-shadow: 0 0 25px rgba(74, 222, 128, 0.6), inset 0 0 12px rgba(74, 222, 128, 0.25);
-      text-shadow: 0 0 12px rgba(74, 222, 128, 0.8);
+      border: 4px solid #4ade80; 
+      transform: translate(-50%, -50%) rotate(-8deg); 
+      box-shadow: 0 0 25px rgba(74, 222, 128, 0.5), inset 0 0 15px rgba(74, 222, 128, 0.2);
     }
-
     .stamp-nope { 
-      left: 15px; 
       color: #fb7185; 
-      background: rgba(15, 23, 42, 0.8); /* 深色毛玻璃底色 */
-      border: 4.5px solid #fb7185; 
-      transform: rotate(-15deg); 
-      box-shadow: 0 0 25px rgba(251, 113, 133, 0.6), inset 0 0 12px rgba(251, 113, 133, 0.25);
-      text-shadow: 0 0 12px rgba(251, 113, 133, 0.8);
+      border: 4px solid #fb7185; 
+      transform: translate(-50%, -50%) rotate(8deg); 
+      box-shadow: 0 0 25px rgba(251, 113, 133, 0.5), inset 0 0 15px rgba(251, 113, 133, 0.2);
     }
 
     /* 底部操作按鈕 */
@@ -474,7 +468,7 @@
     <button class="primary-btn" onclick="showTutorial()">下一步 ✨</button>
   </div>
 
-  <!-- 2. 玩法指引頁面 -->
+  <!-- 2. 玩法指引頁面 (打完名後彈出) -->
   <div class="modal-screen hidden" id="tutorialScreen" style="display: none;">
     <div class="modal-icon">💡</div>
     <h2 id="tutorialGreeting">點樣玩？</h2>
@@ -577,6 +571,7 @@
       }
     });
 
+    // 步驟 1：輸入稱呼後，跳轉至玩法指引
     function showTutorial() {
       const input = document.getElementById('usernameInput');
       const val = input.value.trim();
@@ -597,6 +592,7 @@
       }, 350);
     }
 
+    // 步驟 2：睇完指引，正式開始刷卡
     function startGame() {
       document.getElementById('userHeaderTitle').innerText = `✨ ${userName} 的電影推介`;
       document.getElementById('resultUserTitle').innerText = `🎉 ${userName} 的推介清單`;
@@ -671,19 +667,15 @@
         const rotate = currentX * 0.08;
         card.style.transform = `translateX(${currentX}px) rotate(${rotate}deg)`;
 
-        if (currentX > 25) {
-          likeStamp.style.opacity = Math.min((currentX - 25) / 60, 1);
-          likeStamp.style.transform = `rotate(15deg) scale(${1 + Math.min((currentX - 25) / 180, 0.15)})`;
+        if (currentX > 30) {
+          likeStamp.style.opacity = Math.min((currentX - 30) / 70, 1);
           nopeStamp.style.opacity = 0;
-        } else if (currentX < -25) {
-          nopeStamp.style.opacity = Math.min((-currentX - 25) / 60, 1);
-          nopeStamp.style.transform = `rotate(-15deg) scale(${1 + Math.min((-currentX - 25) / 180, 0.15)})`;
+        } else if (currentX < -30) {
+          nopeStamp.style.opacity = Math.min((-currentX - 30) / 70, 1);
           likeStamp.style.opacity = 0;
         } else {
           likeStamp.style.opacity = 0;
           nopeStamp.style.opacity = 0;
-          likeStamp.style.transform = 'rotate(15deg) scale(1)';
-          nopeStamp.style.transform = 'rotate(-15deg) scale(1)';
         }
       };
 
@@ -691,17 +683,15 @@
         if (!isDragging) return;
         isDragging = false;
 
-        if (currentX > 85) {
+        if (currentX > 90) {
           finishSwipe(card, 'right', movie);
-        } else if (currentX < -85) {
+        } else if (currentX < -90) {
           finishSwipe(card, 'left', movie);
         } else {
           card.style.transition = 'transform 0.3s ease';
           card.style.transform = 'translateX(0px) rotate(0deg)';
           likeStamp.style.opacity = 0;
           nopeStamp.style.opacity = 0;
-          likeStamp.style.transform = 'rotate(15deg) scale(1)';
-          nopeStamp.style.transform = 'rotate(-15deg) scale(1)';
         }
         currentX = 0;
       };
@@ -729,17 +719,11 @@
 
       if (direction === 'right') {
         card.style.transform = 'translateX(550px) rotate(35deg)';
-        if (likeStamp) {
-          likeStamp.style.opacity = '1';
-          likeStamp.style.transform = 'rotate(15deg) scale(1.1)';
-        }
+        if (likeStamp) likeStamp.style.opacity = '1';
         recommended.push(movie);
       } else {
         card.style.transform = 'translateX(-550px) rotate(-35deg)';
-        if (nopeStamp) {
-          nopeStamp.style.opacity = '1';
-          nopeStamp.style.transform = 'rotate(-15deg) scale(1.1)';
-        }
+        if (nopeStamp) nopeStamp.style.opacity = '1';
         notRecommended.push(movie);
       }
       card.style.opacity = '0';
