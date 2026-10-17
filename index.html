@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Disney & Marvel 電影刷刷看！✨</title>
+  <title>Disney 心水配對 ✨</title>
   <style>
     * { 
       box-sizing: border-box; 
@@ -44,13 +44,13 @@
       100% { transform: translate(-50%, -50%) scale(1.15); opacity: 0.9; }
     }
 
-    /* 彈窗畫面基底 (Login & Instructions) */
+    /* 彈窗畫面基底 */
     .modal-screen {
       position: absolute;
       z-index: 50;
       width: 320px;
-      padding: 32px 24px;
-      background: rgba(30, 41, 59, 0.9);
+      padding: 30px 22px;
+      background: rgba(30, 41, 59, 0.92);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border-radius: 24px;
@@ -70,7 +70,7 @@
 
     .modal-icon {
       font-size: 2.8rem;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       animation: floatIcon 3s ease-in-out infinite alternate;
     }
 
@@ -85,26 +85,43 @@
       background: linear-gradient(135deg, #a5f3fc, #c084fc, #f472b6);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 8px;
+      margin-bottom: 4px;
+    }
+
+    .modal-subtitle {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #f472b6;
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+    }
+
+    .tutorial-badge {
+      display: inline-block;
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: #38bdf8;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
     }
 
     .modal-screen p {
-      font-size: 0.85rem;
+      font-size: 0.86rem;
       color: #94a3b8;
-      margin-bottom: 20px;
-      line-height: 1.45;
+      margin-bottom: 18px;
+      line-height: 1.5;
     }
 
     .login-input {
       width: 100%;
-      padding: 14px 16px;
+      padding: 13px 16px;
       background: rgba(15, 23, 42, 0.7);
       border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 14px;
       color: #fff;
       font-size: 1rem;
       outline: none;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
       transition: border-color 0.2s, box-shadow 0.2s;
       text-align: center;
     }
@@ -116,13 +133,13 @@
 
     .primary-btn {
       width: 100%;
-      padding: 14px;
+      padding: 13px;
       background: linear-gradient(135deg, #0284c7, #8b5cf6);
       color: #fff;
       font-weight: 700;
       border: none;
       border-radius: 14px;
-      font-size: 1rem;
+      font-size: 0.98rem;
       cursor: pointer;
       box-shadow: 0 8px 20px rgba(139, 92, 246, 0.35);
       transition: transform 0.15s ease, opacity 0.2s ease;
@@ -139,18 +156,19 @@
       background: rgba(15, 23, 42, 0.65);
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 16px;
-      padding: 14px 16px;
-      margin-bottom: 22px;
+      padding: 14px 14px;
+      margin-bottom: 20px;
       text-align: left;
-      font-size: 0.9rem;
-      line-height: 1.7;
+      font-size: 0.88rem;
+      line-height: 1.45;
     }
 
     .tutorial-item {
       display: flex;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 8px;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 12px;
     }
     .tutorial-item:last-child {
       margin-bottom: 0;
@@ -160,20 +178,22 @@
       background: rgba(74, 222, 128, 0.2);
       color: #4ade80;
       border: 1px solid rgba(74, 222, 128, 0.4);
-      padding: 2px 8px;
+      padding: 3px 8px;
       border-radius: 8px;
       font-weight: 700;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
+      white-space: nowrap;
     }
 
     .tag-not-recommend {
       background: rgba(251, 113, 133, 0.2);
       color: #fb7185;
       border: 1px solid rgba(251, 113, 133, 0.4);
-      padding: 2px 8px;
+      padding: 3px 8px;
       border-radius: 8px;
       font-weight: 700;
-      font-size: 0.82rem;
+      font-size: 0.78rem;
+      white-space: nowrap;
     }
 
     /* 遊戲主頁頂部 */
@@ -191,7 +211,7 @@
       transform: translateY(0);
     }
     .header h1 { 
-      font-size: 1.4rem; 
+      font-size: 1.35rem; 
       font-weight: 800; 
       background: linear-gradient(135deg, #a5f3fc, #c084fc, #f472b6);
       -webkit-background-clip: text;
@@ -299,21 +319,21 @@
       margin-top: 3px; 
     }
 
-    /* 滑動徽章 (Stamps) - 推唔推薦 (海報圖片中央置中並放大) */
+    /* 滑動徽章 (Stamps) */
     .stamp { 
       position: absolute; 
-      top: 145px; /* 剛好在 290px 海報垂直正中間 */
+      top: 145px;
       left: 50%;
-      font-size: 2.3rem; 
+      font-size: 1.75rem; 
       font-weight: 900; 
-      padding: 10px 24px; 
+      padding: 8px 18px; 
       border-radius: 16px; 
       opacity: 0; 
       pointer-events: none;
       transition: opacity 0.15s ease;
       z-index: 30;
       white-space: nowrap;
-      background: rgba(15, 23, 42, 0.6); /* 半透明深底防反光，任何背景均清楚可見 */
+      background: rgba(15, 23, 42, 0.75);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
     }
@@ -353,7 +373,7 @@
       height: 60px; 
       border-radius: 50%; 
       border: 1px solid rgba(255,255,255,0.15); 
-      font-size: 1.6rem; 
+      font-size: 1.5rem; 
       cursor: pointer; 
       display: flex; 
       align-items: center; 
@@ -375,7 +395,7 @@
     }
 
     .swipe-subhint {
-      font-size: 0.75rem;
+      font-size: 0.76rem;
       color: #94a3b8;
       margin-top: 10px;
       letter-spacing: 0.5px;
@@ -385,10 +405,10 @@
     .results-card { 
       display: none; 
       width: 335px; 
-      max-height: 85vh; 
+      max-height: 86vh; 
       background: rgba(30, 41, 59, 0.95); 
       border-radius: 24px; 
-      padding: 24px 20px; 
+      padding: 22px 18px; 
       box-shadow: 0 15px 35px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.15); 
       overflow-y: auto; 
       text-align: center; 
@@ -400,48 +420,85 @@
       background: linear-gradient(135deg, #38bdf8, #818cf8);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 12px; 
+      margin-bottom: 8px; 
     }
     .stats-summary { 
-      font-size: 0.95rem; 
+      font-size: 0.92rem; 
       color: #cbd5e1; 
       line-height: 1.4;
     }
 
     /* Annual Dinner 專屬評語框 */
     .dinner-quote-card {
-      margin: 14px 0 16px 0;
+      margin: 12px 0 14px 0;
       padding: 12px 14px;
       border-radius: 14px;
       background: linear-gradient(135deg, rgba(236, 72, 153, 0.15), rgba(168, 85, 247, 0.15));
       border: 1px solid rgba(244, 114, 182, 0.35);
       color: #fbcfe8;
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       font-weight: 700;
       line-height: 1.4;
       text-shadow: 0 0 10px rgba(244, 114, 182, 0.3);
     }
 
+    .pick-instruction-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      color: #94a3b8;
+      margin-bottom: 8px;
+      padding: 0 4px;
+    }
+
     .recommend-list { 
       text-align: left; 
       background: #0f172a; 
-      padding: 12px 16px; 
+      padding: 10px 12px; 
       border-radius: 14px; 
-      margin-bottom: 18px; 
-      max-height: 180px; 
+      margin-bottom: 16px; 
+      max-height: 195px; 
       overflow-y: auto; 
-      font-size: 0.85rem; 
-      list-style: none;
       border: 1px solid rgba(255,255,255,0.06);
     }
-    .recommend-list li { 
-      margin-bottom: 6px; 
-      color: #7dd3fc; 
-      word-break: break-word;
+
+    /* 自訂勾選樣式 */
+    .pick-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 8px;
+      border-radius: 8px;
+      margin-bottom: 4px;
+      font-size: 0.84rem;
+      color: #cbd5e1;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s ease;
     }
+    .pick-item:last-child {
+      margin-bottom: 0;
+    }
+    .pick-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .pick-item input[type="checkbox"] {
+      accent-color: #38bdf8;
+      width: 17px;
+      height: 17px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .pick-item span {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
     .share-btn { 
       width: 100%; 
-      padding: 12px; 
+      padding: 13px; 
       background: linear-gradient(135deg, #0284c7, #2563eb); 
       color: white; 
       font-weight: 700; 
@@ -459,28 +516,36 @@
 
   <div class="magic-glow"></div>
 
-  <!-- 1. 登入頁面 -->
+  <!-- 1. Page 1：登入畫面 -->
   <div class="modal-screen" id="loginScreen">
     <div class="modal-icon">🏰</div>
-    <h2>電影刷刷看</h2>
-    <p>踏入迪士尼與漫威嘅神奇世界！<br>先話畀我哋知你叫咩名啦：</p>
+    <h2>Disney 心水配對</h2>
+    <div class="modal-subtitle">推薦大測試</div>
+    <p>測試一下你對 Disney 世界有幾熟！<br>你會推薦邊啲作品畀老友睇？<br><span style="font-size:0.8rem; color:#94a3b8; display:inline-block; margin-top:8px;">先話畀我哋知你叫咩名啦：</span></p>
     <input type="text" id="usernameInput" class="login-input" placeholder="輸入你的稱呼" maxlength="20">
     <button class="primary-btn" onclick="showTutorial()">下一步 ✨</button>
   </div>
 
-  <!-- 2. 玩法指引頁面 (打完名後彈出) -->
+  <!-- 2. Page 2：玩法指引畫面 -->
   <div class="modal-screen hidden" id="tutorialScreen" style="display: none;">
     <div class="modal-icon">💡</div>
-    <h2 id="tutorialGreeting">點樣玩？</h2>
+    <div class="tutorial-badge">【玩法說明】</div>
+    <h2 id="tutorialGreeting">準備好未？✨</h2>
     <p style="margin-bottom: 14px;">好似玩交友 App 咁輕鬆表態！</p>
     <div class="tutorial-box">
       <div class="tutorial-item">
-        <span>👉 <b>向右滑</b> 或撳 <b>♥</b></span>
-        <span class="tag-recommend">推薦 ✨</span>
+        <div>
+          👉 <b>會推薦畀老友睇</b><br>
+          <small style="color:#94a3b8;">（向右滑，或者按 ♥️「推薦！」）</small>
+        </div>
+        <span class="tag-recommend">推薦！</span>
       </div>
       <div class="tutorial-item">
-        <span>👈 <b>向左滑</b> 或撳 <b>✕</b></span>
-        <span class="tag-not-recommend">唔推薦 💨</span>
+        <div>
+          👈 <b>覺得一般，或者未睇過</b><br>
+          <small style="color:#94a3b8;">（向左滑，或者按 ✕「一般／未睇過」）</small>
+        </div>
+        <span class="tag-not-recommend">一般／未睇過</span>
       </div>
     </div>
     <button class="primary-btn" onclick="startGame()">明白，即刻開始！🚀</button>
@@ -488,27 +553,32 @@
 
   <!-- 3. 刷卡介面 -->
   <div class="header" id="header">
-    <h1 id="userHeaderTitle">Disney & Marvel 刷刷看</h1>
+    <h1 id="userHeaderTitle">Disney 心水配對</h1>
   </div>
 
   <div class="card-container" id="cardContainer"></div>
 
   <div class="controls-wrapper" id="controls">
     <div class="controls">
-      <button class="btn btn-nope" title="唔推薦" onclick="triggerSwipe('left')">✕</button>
-      <button class="btn btn-like" title="推薦" onclick="triggerSwipe('right')">♥</button>
+      <button class="btn btn-nope" title="一般／未睇過" onclick="triggerSwipe('left')">✕</button>
+      <button class="btn btn-like" title="推薦！" onclick="triggerSwipe('right')">♥</button>
     </div>
-    <div class="swipe-subhint">👈 唔推薦 ｜ 推薦 👉</div>
+    <div class="swipe-subhint">👈 一般／未睇過 ｜ 推薦！ 👉</div>
   </div>
 
   <!-- 4. 結果結算頁面 -->
   <div class="results-card" id="resultsCard">
-    <h2 id="resultUserTitle">🎉 推介結算</h2>
+    <h2 id="resultUserTitle">🎉 心水推介清單</h2>
     <div class="stats-summary" id="statsSummary"></div>
     <div class="dinner-quote-card" id="dinnerQuoteCard"></div>
-    <p style="text-align: left; font-size: 0.8rem; color: #94a3b8; margin-bottom: 8px;">你推薦嘅名單：</p>
-    <ul class="recommend-list" id="recommendList"></ul>
-    <button class="share-btn" onclick="copyResults()">複製推介名單分享去 WhatsApp</button>
+    
+    <div class="pick-instruction-header">
+      <span>精選推介分享落 WhatsApp：</span>
+      <span style="color: #38bdf8; font-weight:700;" id="pickCounterText">已選 0/5 套</span>
+    </div>
+    <div class="recommend-list" id="recommendList"></div>
+    
+    <button class="share-btn" onclick="copyResults()">複製精選 5 套分享去 WhatsApp</button>
   </div>
 
   <script>
@@ -578,7 +648,8 @@
       userName = val || "神祕影迷";
       localStorage.setItem('disney_swiper_username', userName);
 
-      document.getElementById('tutorialGreeting').innerText = `哈囉 ${userName}！✨`;
+      // 動態代入玩家稱呼
+      document.getElementById('tutorialGreeting').innerText = `準備好未，${userName}？✨`;
 
       const loginScreen = document.getElementById('loginScreen');
       loginScreen.classList.add('hidden');
@@ -592,10 +663,10 @@
       }, 350);
     }
 
-    // 步驟 2：睇完指引，正式開始刷卡
+    // 步驟 2：正式開始刷卡
     function startGame() {
-      document.getElementById('userHeaderTitle').innerText = `✨ ${userName} 的電影推介`;
-      document.getElementById('resultUserTitle').innerText = `🎉 ${userName} 的推介清單`;
+      document.getElementById('userHeaderTitle').innerText = `✨ ${userName} 的 Disney 心水配對`;
+      document.getElementById('resultUserTitle').innerText = `🎉 ${userName} 的心水推介`;
 
       const tutorialScreen = document.getElementById('tutorialScreen');
       tutorialScreen.classList.add('hidden');
@@ -632,8 +703,8 @@
             <div class="movie-year">${movie.year}</div>
           </div>
         </div>
-        <div class="stamp stamp-like">推薦 ✨</div>
-        <div class="stamp stamp-nope">唔推薦 💨</div>
+        <div class="stamp stamp-like">推薦！♥️</div>
+        <div class="stamp stamp-nope">一般／未睇過</div>
       `;
 
       initDrag(card, movie);
@@ -752,6 +823,22 @@
       }
     }
 
+    // 更新剔選計數器
+    function handlePickChange(checkbox) {
+      const checkedBoxes = document.querySelectorAll('input[name="pickedMovie"]:checked');
+      if (checkedBoxes.length > 5) {
+        checkbox.checked = false;
+        alert('最多只可以剔選 5 套電影推介落 WhatsApp 清單呀！');
+        return;
+      }
+      updatePickCounter();
+    }
+
+    function updatePickCounter() {
+      const count = document.querySelectorAll('input[name="pickedMovie"]:checked').length;
+      document.getElementById('pickCounterText').innerText = `已選 ${count}/5 套`;
+    }
+
     function showResults() {
       document.getElementById('header').style.display = 'none';
       document.getElementById('cardContainer').style.display = 'none';
@@ -769,11 +856,19 @@
 
       document.getElementById('dinnerQuoteCard').innerText = annualComment;
 
-      const list = document.getElementById('recommendList');
+      const listContainer = document.getElementById('recommendList');
       if (recommended.length === 0) {
-        list.innerHTML = '<li>你暫時一套都無推薦～</li>';
+        listContainer.innerHTML = '<div style="color:#94a3b8; font-size:0.85rem; padding:8px 0;">你暫時未有推薦嘅作品～</div>';
+        document.getElementById('pickCounterText').innerText = '已選 0/5 套';
       } else {
-        list.innerHTML = recommended.map(m => `<li>✨ ${m.title}</li>`).join('');
+        // 動態生成帶有 Checkbox 的清單，預設勾選前 5 套
+        listContainer.innerHTML = recommended.map((m, idx) => `
+          <label class="pick-item">
+            <input type="checkbox" name="pickedMovie" value="${m.title}" ${idx < 5 ? 'checked' : ''} onchange="handlePickChange(this)">
+            <span>✨ ${m.title}</span>
+          </label>
+        `).join('');
+        updatePickCounter();
       }
 
       if (GOOGLE_SCRIPT_URL) {
@@ -799,14 +894,24 @@
 
     function copyResults() {
       const percentage = Math.round((recommended.length / movies.length) * 100);
-      const text = `🎬 【${userName}】嘅 Disney & Marvel 電影推介戰績：\n` +
-        `我推薦咗 ${recommended.length} / ${movies.length} 套 (${percentage}%)！\n\n` +
+      const checkedBoxes = document.querySelectorAll('input[name="pickedMovie"]:checked');
+      const pickedTitles = Array.from(checkedBoxes).map(cb => cb.value);
+
+      let pickedListText = "";
+      if (pickedTitles.length > 0) {
+        pickedListText = pickedTitles.map((t, idx) => `${idx + 1}. ${t}`).join('\n');
+      } else {
+        pickedListText = "（暫未剔選心水推薦）";
+      }
+
+      const text = `🎬 【${userName}】嘅 Disney 心水配對戰績：\n` +
+        `推薦咗 ${recommended.length} / ${movies.length} 套 (${percentage}%)！\n\n` +
         `📣 Annual Team 評價：\n「${annualComment}」\n\n` +
-        `👍 我嘅推薦名單：\n` + 
-        recommended.map(m => `• ${m.title}`).join('\n');
+        `🌟 我精選推薦嘅 5 套神作：\n` + 
+        pickedListText;
       
       navigator.clipboard.writeText(text).then(() => {
-        alert('已複製個人推介戰績與評語！快點貼到 WhatsApp 分享啦～ ✨');
+        alert('已複製 5 套精選推介與戰績！快點貼到 WhatsApp 分享啦～ ✨');
       });
     }
 
