@@ -2,7 +2,7 @@
 <html lang="zh-HK">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Disney 心水配對 ✨</title>
   <style>
     * { 
@@ -19,7 +19,8 @@
       flex-direction: column; 
       align-items: center; 
       justify-content: center; 
-      min-height: 100vh; 
+      min-height: 100vh;
+      min-height: 100dvh; /* 防止手機網址列縮放時裁切到按鈕 */
       overflow: hidden; 
       position: relative;
     }
@@ -131,7 +132,6 @@
       box-shadow: 0 0 12px rgba(56, 189, 248, 0.35);
     }
 
-    /* 未打名時的震動與錯誤高亮 */
     .login-input.error {
       border-color: #fb7185;
       box-shadow: 0 0 14px rgba(251, 113, 133, 0.45);
@@ -222,7 +222,7 @@
     /* 遊戲主頁頂部 */
     .header { 
       position: absolute; 
-      top: 28px; 
+      top: 24px; 
       text-align: center; 
       z-index: 20; 
       opacity: 0;
@@ -378,7 +378,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-top: 20px;
+      margin-top: 18px;
       z-index: 20;
       opacity: 0;
       transition: opacity 0.4s ease;
@@ -451,7 +451,6 @@
       line-height: 1.4;
     }
 
-    /* Annual Dinner 專屬評語框 */
     .dinner-quote-card {
       margin: 12px 0 14px 0;
       padding: 12px 14px;
@@ -486,7 +485,6 @@
       border: 1px solid rgba(255,255,255,0.06);
     }
 
-    /* 自訂勾選樣式 */
     .pick-item {
       display: flex;
       align-items: center;
@@ -539,7 +537,7 @@
 
   <div class="magic-glow"></div>
 
-  <!-- 1. Page 1：登入畫面 (強制打名) -->
+  <!-- 1. Page 1：登入畫面 (必填稱呼) -->
   <div class="modal-screen" id="loginScreen">
     <div class="modal-icon">🏰</div>
     <h2>Disney 心水配對</h2>
@@ -602,7 +600,7 @@
     </div>
     <div class="recommend-list" id="recommendList"></div>
     
-    <button class="share-btn" onclick="copyResults()">複製精選 5 套分享去 WhatsApp</button>
+    <button class="share-btn" onclick="copyResults()">複製精選推介分享去 WhatsApp</button>
   </div>
 
   <script>
@@ -610,6 +608,7 @@
 
     let userName = "";
     let annualComment = "";
+    let isSwiping = false; // 防連點、防跳卡動畫鎖
 
     const movies = [
       { title: "白雪公主 (Snow White)", category: "迪士尼經典", year: "1937", image: "./Snow White.jpg" },
@@ -665,13 +664,19 @@
       }
     });
 
-    // 監聽用戶打字，即時消除錯誤提示
+    // 監聽用戶輸入，動態清除紅色提示
     document.getElementById('usernameInput').addEventListener('input', () => {
       document.getElementById('nameErrorMsg').style.display = 'none';
       document.getElementById('usernameInput').classList.remove('error');
     });
 
-    // 步驟 1：強制檢查稱呼，空白則阻擋跳轉
+    // 支援中文輸入法選字 Enter 防誤觸
+    document.getElementById('usernameInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.isComposing) {
+        showTutorial();
+      }
+    });
+
     function showTutorial() {
       const input = document.getElementById('usernameInput');
       const errorMsg = document.getElementById('nameErrorMsg');
@@ -679,12 +684,11 @@
 
       if (!val) {
         input.classList.remove('error');
-        // 強制重繪以重複觸發 shake 動畫
-        void input.offsetWidth;
+        void input.offsetWidth; // 重置動畫
         input.classList.add('error');
         errorMsg.style.display = 'block';
         input.focus();
-        return; // 嚴格阻擋往下執行
+        return;
       }
 
       errorMsg.style.display = 'none';
@@ -692,7 +696,6 @@
       userName = val;
       localStorage.setItem('disney_swiper_username', userName);
 
-      // 動態代入玩家稱呼
       document.getElementById('tutorialGreeting').innerText = `準備好未，${userName}？✨`;
 
       const loginScreen = document.getElementById('loginScreen');
@@ -707,7 +710,6 @@
       }, 350);
     }
 
-    // 步驟 2：正式開始刷卡
     function startGame() {
       document.getElementById('userHeaderTitle').innerText = `✨ ${userName} 的 Disney 心水配對`;
       document.getElementById('resultUserTitle').innerText = `🎉 ${userName} 的心水推介`;
@@ -723,17 +725,14 @@
       }, 350);
     }
 
-    document.getElementById('usernameInput').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') showTutorial();
-    });
-
     function createCard(movie, index) {
       const card = document.createElement('div');
       card.classList.add('card');
       card.style.zIndex = movies.length - index;
 
       const posterContent = movie.image 
-        ? `<img src="${movie.image}" alt="${movie.title}" onerror="this.parentElement.innerHTML='<div class=\\'movie-poster-placeholder\\'><span>🎬</span><small>圖片載入失敗</small></div>'">` 
+        ? `<img src="${movie.image}" alt="${movie.title}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+           <div class="movie-poster-placeholder" style="display:none;"><span>🎬</span><small>圖片載入失敗</small></div>` 
         : `<div class="movie-poster-placeholder"><span>✨</span><small>電影海報預留位</small></div>`;
 
       card.innerHTML = `
@@ -763,17 +762,11 @@
       });
     }
 
+    // 修復效能：僅在按住卡片時綁定 Move/End 監聽器，放手即銷毀
     function initDrag(card, movie) {
       let startX = 0, currentX = 0, isDragging = false;
       const likeStamp = card.querySelector('.stamp-like');
       const nopeStamp = card.querySelector('.stamp-nope');
-
-      const onStart = (e) => {
-        if (card !== container.firstElementChild) return;
-        isDragging = true;
-        startX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-        card.style.transition = 'none';
-      };
 
       const onMove = (e) => {
         if (!isDragging) return;
@@ -798,6 +791,12 @@
         if (!isDragging) return;
         isDragging = false;
 
+        // 移除 window 臨時監聽
+        window.removeEventListener('mousemove', onMove);
+        window.removeEventListener('mouseup', onEnd);
+        window.removeEventListener('touchmove', onMove);
+        window.removeEventListener('touchend', onEnd);
+
         if (currentX > 90) {
           finishSwipe(card, 'right', movie);
         } else if (currentX < -90) {
@@ -811,23 +810,37 @@
         currentX = 0;
       };
 
-      card.addEventListener('mousedown', onStart);
-      window.addEventListener('mousemove', onMove);
-      window.addEventListener('mouseup', onEnd);
+      const onStart = (e) => {
+        if (isSwiping || card !== container.firstElementChild) return;
+        isDragging = true;
+        startX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+        card.style.transition = 'none';
 
+        // 動態掛載全域滑動
+        window.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseup', onEnd);
+        window.addEventListener('touchmove', onMove, { passive: true });
+        window.addEventListener('touchend', onEnd);
+      };
+
+      card.addEventListener('mousedown', onStart);
       card.addEventListener('touchstart', onStart, { passive: true });
-      window.addEventListener('touchmove', onMove, { passive: true });
-      window.addEventListener('touchend', onEnd);
     }
 
     function triggerSwipe(direction) {
-      const topCard = container.querySelector('.card');
-      if (!topCard || currentIndex >= movies.length) return;
+      if (isSwiping || currentIndex >= movies.length) return;
+      const topCard = container.firstElementChild;
+      if (!topCard) return;
       finishSwipe(topCard, direction, movies[currentIndex]);
     }
 
     function finishSwipe(card, direction, movie) {
-      card.style.transition = 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.35s ease';
+      if (isSwiping) return;
+      isSwiping = true;
+
+      // 飛出時禁用事件，防止二次誤觸
+      card.style.pointerEvents = 'none';
+      card.style.transition = 'transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease';
       
       const likeStamp = card.querySelector('.stamp-like');
       const nopeStamp = card.querySelector('.stamp-nope');
@@ -845,12 +858,13 @@
 
       setTimeout(() => {
         card.remove();
-      }, 300);
+        currentIndex++;
+        isSwiping = false; // 解除動畫鎖
 
-      currentIndex++;
-      if (currentIndex >= movies.length) {
-        setTimeout(showResults, 350);
-      }
+        if (currentIndex >= movies.length) {
+          showResults();
+        }
+      }, 300);
     }
 
     function getAnnualDinnerComment(percentage) {
@@ -867,7 +881,6 @@
       }
     }
 
-    // 限制勾選上限 5 套
     function handlePickChange(checkbox) {
       const checkedBoxes = document.querySelectorAll('input[name="pickedMovie"]:checked');
       if (checkedBoxes.length > 5) {
@@ -905,7 +918,6 @@
         listContainer.innerHTML = '<div style="color:#94a3b8; font-size:0.85rem; padding:8px 0;">你暫時未有推薦嘅作品～</div>';
         document.getElementById('pickCounterText').innerText = '已選 0/5 套';
       } else {
-        // 動態生成帶有 Checkbox 的清單，預設勾選前 5 套
         listContainer.innerHTML = recommended.map((m, idx) => `
           <label class="pick-item">
             <input type="checkbox" name="pickedMovie" value="${m.title}" ${idx < 5 ? 'checked' : ''} onchange="handlePickChange(this)">
@@ -927,10 +939,11 @@
           watchedList: recommended.map(m => m.title)
         };
 
+        // 使用 text/plain 避免觸發 Apps Script CORS 預檢失敗
         fetch(GOOGLE_SCRIPT_URL, {
           method: "POST",
           mode: "no-cors",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
           body: JSON.stringify(payload)
         }).catch(err => console.log("上報失敗:", err));
       }
@@ -942,7 +955,10 @@
       const pickedTitles = Array.from(checkedBoxes).map(cb => cb.value);
 
       let pickedListText = "";
+      let titleHeader = "🌟 我精選推薦嘅心水神作：";
+      
       if (pickedTitles.length > 0) {
+        titleHeader = `🌟 我精選推薦嘅 ${pickedTitles.length} 套神作：`;
         pickedListText = pickedTitles.map((t, idx) => `${idx + 1}. ${t}`).join('\n');
       } else {
         pickedListText = "（暫未剔選心水推薦）";
@@ -951,11 +967,13 @@
       const text = `🎬 【${userName}】嘅 Disney 心水配對戰績：\n` +
         `推薦咗 ${recommended.length} / ${movies.length} 套 (${percentage}%)！\n\n` +
         `📣 Annual Team 評價：\n「${annualComment}」\n\n` +
-        `🌟 我精選推薦嘅 5 套神作：\n` + 
+        `${titleHeader}\n` + 
         pickedListText;
       
       navigator.clipboard.writeText(text).then(() => {
-        alert('已複製 5 套精選推介與戰績！快點貼到 WhatsApp 分享啦～ ✨');
+        alert('已複製精選推介與戰績！快點貼到 WhatsApp 分享啦～ ✨');
+      }).catch(() => {
+        alert('複製失敗，請手動複製結果。');
       });
     }
 
