@@ -20,7 +20,7 @@
       align-items: center; 
       justify-content: center; 
       min-height: 100vh;
-      min-height: 100dvh; /* 防止手機網址列縮放時裁切到按鈕 */
+      min-height: 100dvh;
       overflow: hidden; 
       position: relative;
     }
@@ -595,7 +595,7 @@
     <div class="dinner-quote-card" id="dinnerQuoteCard"></div>
     
     <div class="pick-instruction-header">
-      <span>精選推介分享落 WhatsApp：</span>
+      <span>剔選你想推薦畀老友嘅電影：</span>
       <span style="color: #38bdf8; font-weight:700;" id="pickCounterText">已選 0/5 套</span>
     </div>
     <div class="recommend-list" id="recommendList"></div>
@@ -608,7 +608,7 @@
 
     let userName = "";
     let annualComment = "";
-    let isSwiping = false; // 防連點、防跳卡動畫鎖
+    let isSwiping = false;
 
     const movies = [
       { title: "白雪公主 (Snow White)", category: "迪士尼經典", year: "1937", image: "./Snow White.jpg" },
@@ -664,13 +664,11 @@
       }
     });
 
-    // 監聽用戶輸入，動態清除紅色提示
     document.getElementById('usernameInput').addEventListener('input', () => {
       document.getElementById('nameErrorMsg').style.display = 'none';
       document.getElementById('usernameInput').classList.remove('error');
     });
 
-    // 支援中文輸入法選字 Enter 防誤觸
     document.getElementById('usernameInput').addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && !e.isComposing) {
         showTutorial();
@@ -684,7 +682,7 @@
 
       if (!val) {
         input.classList.remove('error');
-        void input.offsetWidth; // 重置動畫
+        void input.offsetWidth;
         input.classList.add('error');
         errorMsg.style.display = 'block';
         input.focus();
@@ -762,7 +760,6 @@
       });
     }
 
-    // 修復效能：僅在按住卡片時綁定 Move/End 監聽器，放手即銷毀
     function initDrag(card, movie) {
       let startX = 0, currentX = 0, isDragging = false;
       const likeStamp = card.querySelector('.stamp-like');
@@ -791,7 +788,6 @@
         if (!isDragging) return;
         isDragging = false;
 
-        // 移除 window 臨時監聽
         window.removeEventListener('mousemove', onMove);
         window.removeEventListener('mouseup', onEnd);
         window.removeEventListener('touchmove', onMove);
@@ -816,7 +812,6 @@
         startX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
         card.style.transition = 'none';
 
-        // 動態掛載全域滑動
         window.addEventListener('mousemove', onMove);
         window.addEventListener('mouseup', onEnd);
         window.addEventListener('touchmove', onMove, { passive: true });
@@ -838,7 +833,6 @@
       if (isSwiping) return;
       isSwiping = true;
 
-      // 飛出時禁用事件，防止二次誤觸
       card.style.pointerEvents = 'none';
       card.style.transition = 'transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease';
       
@@ -859,7 +853,7 @@
       setTimeout(() => {
         card.remove();
         currentIndex++;
-        isSwiping = false; // 解除動畫鎖
+        isSwiping = false;
 
         if (currentIndex >= movies.length) {
           showResults();
@@ -918,9 +912,10 @@
         listContainer.innerHTML = '<div style="color:#94a3b8; font-size:0.85rem; padding:8px 0;">你暫時未有推薦嘅作品～</div>';
         document.getElementById('pickCounterText').innerText = '已選 0/5 套';
       } else {
-        listContainer.innerHTML = recommended.map((m, idx) => `
+        // 不再預設勾選任何電影，全由玩家自行剔選
+        listContainer.innerHTML = recommended.map(m => `
           <label class="pick-item">
-            <input type="checkbox" name="pickedMovie" value="${m.title}" ${idx < 5 ? 'checked' : ''} onchange="handlePickChange(this)">
+            <input type="checkbox" name="pickedMovie" value="${m.title}" onchange="handlePickChange(this)">
             <span>✨ ${m.title}</span>
           </label>
         `).join('');
@@ -939,7 +934,6 @@
           watchedList: recommended.map(m => m.title)
         };
 
-        // 使用 text/plain 避免觸發 Apps Script CORS 預檢失敗
         fetch(GOOGLE_SCRIPT_URL, {
           method: "POST",
           mode: "no-cors",
@@ -954,6 +948,12 @@
       const checkedBoxes = document.querySelectorAll('input[name="pickedMovie"]:checked');
       const pickedTitles = Array.from(checkedBoxes).map(cb => cb.value);
 
+      // 若有推薦作品但玩家尚未勾選任何項目，提示先做選取
+      if (recommended.length > 0 && pickedTitles.length === 0) {
+        alert('請先在清單中剔選你想推薦畀老友睇嘅電影（最多 5 套）！✨');
+        return;
+      }
+
       let pickedListText = "";
       let titleHeader = "🌟 我精選推薦嘅心水神作：";
       
@@ -961,7 +961,7 @@
         titleHeader = `🌟 我精選推薦嘅 ${pickedTitles.length} 套神作：`;
         pickedListText = pickedTitles.map((t, idx) => `${idx + 1}. ${t}`).join('\n');
       } else {
-        pickedListText = "（暫未剔選心水推薦）";
+        pickedListText = "（暫未有推薦神作）";
       }
 
       const text = `🎬 【${userName}】嘅 Disney 心水配對戰績：\n` +
