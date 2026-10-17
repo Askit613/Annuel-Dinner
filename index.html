@@ -131,6 +131,29 @@
       box-shadow: 0 0 12px rgba(56, 189, 248, 0.35);
     }
 
+    /* 未打名時的震動與錯誤高亮 */
+    .login-input.error {
+      border-color: #fb7185;
+      box-shadow: 0 0 14px rgba(251, 113, 133, 0.45);
+      animation: shake 0.4s ease-in-out;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+
+    .name-error-msg {
+      display: none;
+      color: #fb7185;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-top: -12px;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+
     .primary-btn {
       width: 100%;
       padding: 13px;
@@ -516,13 +539,14 @@
 
   <div class="magic-glow"></div>
 
-  <!-- 1. Page 1：登入畫面 -->
+  <!-- 1. Page 1：登入畫面 (強制打名) -->
   <div class="modal-screen" id="loginScreen">
     <div class="modal-icon">🏰</div>
     <h2>Disney 心水配對</h2>
     <div class="modal-subtitle">推薦大測試</div>
     <p>測試一下你對 Disney 世界有幾熟！<br>你會推薦邊啲作品畀老友睇？<br><span style="font-size:0.8rem; color:#94a3b8; display:inline-block; margin-top:8px;">先話畀我哋知你叫咩名啦：</span></p>
-    <input type="text" id="usernameInput" class="login-input" placeholder="輸入你的稱呼" maxlength="20">
+    <input type="text" id="usernameInput" class="login-input" placeholder="輸入你的稱呼 (必須輸入)" maxlength="20">
+    <div class="name-error-msg" id="nameErrorMsg">請先輸入稱呼先可以開始玩呀！✨</div>
     <button class="primary-btn" onclick="showTutorial()">下一步 ✨</button>
   </div>
 
@@ -598,7 +622,6 @@
       { title: "阿拉丁 (Aladdin)", category: "迪士尼經典", year: "1992", image: "./阿拉丁.jpg" },
       { title: "獅子王 (The Lion King)", category: "迪士尼經典", year: "1994", image: "./獅子王.jpg" },
       { title: "花木蘭 (Mulan)", category: "迪士尼經典", year: "1998", image: "./花木蘭.jpg" },
-      { title: "加勒比海盜 (Pirates of the Caribbean)", category: "迪士尼經典", year: "2002", image: "./Pirates of the Caribbean.jpg" },
 
       { title: "魔髮奇緣 (Tangled)", category: "迪士尼動畫", year: "2010", image: "./魔髮奇緣.jpg" },
       { title: "無敵破壞王 (Wreck-It Ralph)", category: "迪士尼動畫", year: "2012", image: "./無敵破壞王.jpg" },
@@ -642,11 +665,31 @@
       }
     });
 
-    // 步驟 1：輸入稱呼後，跳轉至玩法指引
+    // 監聽用戶打字，即時消除錯誤提示
+    document.getElementById('usernameInput').addEventListener('input', () => {
+      document.getElementById('nameErrorMsg').style.display = 'none';
+      document.getElementById('usernameInput').classList.remove('error');
+    });
+
+    // 步驟 1：強制檢查稱呼，空白則阻擋跳轉
     function showTutorial() {
       const input = document.getElementById('usernameInput');
+      const errorMsg = document.getElementById('nameErrorMsg');
       const val = input.value.trim();
-      userName = val || "神祕影迷";
+
+      if (!val) {
+        input.classList.remove('error');
+        // 強制重繪以重複觸發 shake 動畫
+        void input.offsetWidth;
+        input.classList.add('error');
+        errorMsg.style.display = 'block';
+        input.focus();
+        return; // 嚴格阻擋往下執行
+      }
+
+      errorMsg.style.display = 'none';
+      input.classList.remove('error');
+      userName = val;
       localStorage.setItem('disney_swiper_username', userName);
 
       // 動態代入玩家稱呼
@@ -824,7 +867,7 @@
       }
     }
 
-    // 更新剔選計數器
+    // 限制勾選上限 5 套
     function handlePickChange(checkbox) {
       const checkedBoxes = document.querySelectorAll('input[name="pickedMovie"]:checked');
       if (checkedBoxes.length > 5) {
